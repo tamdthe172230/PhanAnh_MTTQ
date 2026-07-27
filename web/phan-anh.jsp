@@ -1443,17 +1443,11 @@
                             return rawList.map(function (fb) {
                                 var displayType = fb.type || 'Phản ánh, kiến nghị';
                                 var displayContent = fb.content || '';
-                                if (displayContent && displayContent.indexOf('[Lĩnh vực: ') === 0) {
-                                    var endIdx = displayContent.indexOf('] ');
-                                    if (endIdx !== -1) {
-                                        displayType = displayContent.substring(11, endIdx);
-                                        displayContent = displayContent.substring(endIdx + 2);
-                                    } else {
-                                        var endIdx2 = displayContent.indexOf(']');
-                                        if (endIdx2 !== -1) {
-                                            displayType = displayContent.substring(11, endIdx2);
-                                            displayContent = displayContent.substring(endIdx2 + 1).trim();
-                                        }
+                                if (displayContent) {
+                                    var match = displayContent.match(/^\[Lĩnh vực:\s*([^\]]+)\]\s*(.*)/s);
+                                    if (match) {
+                                        displayType = match[1].trim();
+                                        displayContent = match[2].trim();
                                     }
                                 }
                                 return {

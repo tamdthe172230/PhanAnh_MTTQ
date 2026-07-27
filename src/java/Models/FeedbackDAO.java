@@ -29,10 +29,22 @@ public class FeedbackDAO extends DBContext {
                 fb.setPhone(rs.getString("phone"));
                 fb.setDate(rs.getString("feedback_date"));
                 fb.setThon(rs.getString("street_name"));
-                fb.setType(rs.getString("type_name"));
+                String rawType = rs.getString("type_name");
+                String rawContent = rs.getString("content");
+                if (rawContent != null && rawContent.startsWith("[Lĩnh vực:")) {
+                    int endIdx = rawContent.indexOf("]");
+                    if (endIdx != -1) {
+                        String customType = rawContent.substring(rawContent.indexOf(":") + 1, endIdx).trim();
+                        if (!customType.isEmpty()) {
+                            rawType = customType;
+                        }
+                        rawContent = rawContent.substring(endIdx + 1).trim();
+                    }
+                }
+                fb.setType(rawType);
+                fb.setContent(rawContent);
                 fb.setStatus(rs.getString("status"));
                 fb.setStatusLabel(rs.getString("status_label"));
-                fb.setContent(rs.getString("content"));
                 fb.setReply(rs.getString("reply"));
                 fb.setAttachedFile(rs.getString("attached_file"));
                 list.add(fb);
