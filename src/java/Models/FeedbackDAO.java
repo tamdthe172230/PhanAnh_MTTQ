@@ -45,8 +45,56 @@ public class FeedbackDAO extends DBContext {
         return list;
     }
 
+    private void ensureCategoryAndStreetExist() {
+        try {
+            Statement st = connection.createStatement();
+            ResultSet rs1 = st.executeQuery("SELECT COUNT(*) FROM streets");
+            if (rs1.next() && rs1.getInt(1) == 0) {
+                st.executeUpdate("INSERT INTO streets (name) VALUES ('Khu phố Lưu Khê'), ('Khu phố Liên Hòa 1'), ('Khu phố Liên Hòa 2'), ('Khu phố Vĩnh Hòa')");
+            }
+            ResultSet rs2 = st.executeQuery("SELECT COUNT(*) FROM feedback_type");
+            if (rs2.next() && rs2.getInt(1) == 0) {
+                st.executeUpdate("INSERT INTO feedback_type (name) VALUES ('An ninh trật tự - Phòng cháy chữa cháy'), ('Môi trường - Vệ sinh công cộng'), ('Đô thị - Giao thông'), ('Hạ tầng - Đô thị'), ('Lĩnh vực khác')");
+            }
+        } catch (Exception e) {
+            System.out.println("Lỗi ensureCategoryAndStreetExist: " + e.getMessage());
+        }
+    }
+
+    private int getValidStreetId(int requestedId) {
+        try {
+            PreparedStatement st = connection.prepareStatement("SELECT id FROM streets WHERE id = ?");
+            st.setInt(1, requestedId);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) return requestedId;
+            
+            Statement st2 = connection.createStatement();
+            ResultSet rs2 = st2.executeQuery("SELECT id FROM streets ORDER BY id ASC LIMIT 1");
+            if (rs2.next()) return rs2.getInt(1);
+        } catch(Exception e) {}
+        return 1;
+    }
+
+    private int getValidTypeId(int requestedId) {
+        try {
+            PreparedStatement st = connection.prepareStatement("SELECT id FROM feedback_type WHERE id = ?");
+            st.setInt(1, requestedId);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) return requestedId;
+            
+            Statement st2 = connection.createStatement();
+            ResultSet rs2 = st2.executeQuery("SELECT id FROM feedback_type ORDER BY id ASC LIMIT 1");
+            if (rs2.next()) return rs2.getInt(1);
+        } catch(Exception e) {}
+        return 1;
+    }
+
     public int addFeedback(Feedback fb, int streetId, int typeId) {
         if (connection == null) return -1;
+        ensureCategoryAndStreetExist();
+        int validStreetId = getValidStreetId(streetId);
+        int validTypeId = getValidTypeId(typeId);
+
         String sql = "INSERT INTO feedback (voter_name, phone, feedback_date, street_id, type_id, status, status_label, content, reply, attached_file) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try {
@@ -54,8 +102,8 @@ public class FeedbackDAO extends DBContext {
             st.setString(1, fb.getVoterName());
             st.setString(2, fb.getPhone());
             st.setString(3, fb.getDate());
-            st.setInt(4, streetId);
-            st.setInt(5, typeId);
+            st.setInt(4, validStreetId);
+            st.setInt(5, validTypeId);
             st.setString(6, fb.getStatus());
             st.setString(7, fb.getStatusLabel());
             st.setString(8, fb.getContent());
