@@ -12,11 +12,12 @@ public class FeedbackDAO extends DBContext {
 
     public List<Feedback> getAllFeedbacks() {
         List<Feedback> list = new ArrayList<>();
+        if (connection == null) return list;
         String sql = "SELECT f.id, f.voter_name, f.phone, f.feedback_date, s.name AS street_name, t.name AS type_name, f.status, f.status_label, f.content, f.reply, f.attached_file " +
                      "FROM feedback f " +
-                     "JOIN streets s ON f.street_id = s.id " +
-                     "JOIN feedback_type t ON f.type_id = t.id " +
-                     "WHERE f.is_deleted = 0 " +
+                     "LEFT JOIN streets s ON f.street_id = s.id " +
+                     "LEFT JOIN feedback_type t ON f.type_id = t.id " +
+                     "WHERE f.is_deleted = 0 OR f.is_deleted IS NULL " +
                      "ORDER BY f.id DESC";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
@@ -36,7 +37,7 @@ public class FeedbackDAO extends DBContext {
                 fb.setAttachedFile(rs.getString("attached_file"));
                 list.add(fb);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println("Lỗi getAllFeedbacks: " + e.getMessage());
         } finally {
             close();
@@ -45,6 +46,7 @@ public class FeedbackDAO extends DBContext {
     }
 
     public int addFeedback(Feedback fb, int streetId, int typeId) {
+        if (connection == null) return -1;
         String sql = "INSERT INTO feedback (voter_name, phone, feedback_date, street_id, type_id, status, status_label, content, reply, attached_file) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try {
@@ -67,7 +69,7 @@ public class FeedbackDAO extends DBContext {
                     return rs.getInt(1);
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println("Lỗi addFeedback: " + e.getMessage());
         } finally {
             close();
@@ -77,6 +79,7 @@ public class FeedbackDAO extends DBContext {
 
     public List<Category> getAllFeedbackTypes() {
         List<Category> list = new ArrayList<>();
+        if (connection == null) return getFallbackTypes();
         String sql = "SELECT id, name FROM feedback_type";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
@@ -87,10 +90,23 @@ public class FeedbackDAO extends DBContext {
                 cat.setName(rs.getString("name"));
                 list.add(cat);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println("Lỗi getAllFeedbackTypes: " + e.getMessage());
         } finally {
             close();
+        }
+        if (list.isEmpty()) return getFallbackTypes();
+        return list;
+    }
+
+    private List<Category> getFallbackTypes() {
+        List<Category> list = new ArrayList<>();
+        String[] types = {"An ninh trật tự - Phòng cháy chữa cháy", "Môi trường - Vệ sinh công cộng", "Đô thị - Giao thông", "Hạ tầng - Đô thị", "Lĩnh vực khác"};
+        for (int i = 0; i < types.length; i++) {
+            Category cat = new Category();
+            cat.setCode(String.valueOf(i + 1));
+            cat.setName(types[i]);
+            list.add(cat);
         }
         return list;
     }
