@@ -142,6 +142,12 @@
             color: #fff;
         }
 
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         .btn-login {
             padding: 8px 20px;
             border: 1.5px solid rgba(255, 255, 255, .8);
@@ -162,7 +168,7 @@
         /* ── MAIN CONTENT ── */
         .page-wrap {
             max-width: 1360px;
-            margin: 32px auto;
+            margin: 35px auto 70px;
             padding: 0 24px;
             flex: 1;
             width: 100%;
@@ -175,13 +181,13 @@
             border-radius: 8px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, .08);
             overflow: hidden;
-            border: 1px solid #e2e8f0;
+            border: 1px solid #e5e7eb;
         }
 
         .login-card-header {
             background: var(--red);
             color: #fff;
-            padding: 18px 24px;
+            padding: 16px 24px;
             font-size: 1.1rem;
             font-weight: 700;
             display: flex;
@@ -340,7 +346,9 @@
                     <li><a href="<%= ctx %>/phan-anh#tracuu">Tra cứu</a></li>
                     <li><a href="#" class="active">Quản lý</a></li>
                 </ul>
-                <a href="<%= ctx %>/phan-anh-login" class="btn-login">Đăng nhập</a>
+                <div class="navbar-right">
+                    <a href="<%= ctx %>/phan-anh-login" class="btn-login">Đăng nhập</a>
+                </div>
             </div>
         </nav>
     </header>
