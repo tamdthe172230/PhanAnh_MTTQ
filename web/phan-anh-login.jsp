@@ -149,6 +149,7 @@
         }
 
         .btn-login {
+            display: inline-block;
             padding: 8px 20px;
             border: 1.5px solid rgba(255, 255, 255, .8);
             color: #fff;
@@ -157,6 +158,7 @@
             font-size: .9rem;
             font-weight: 700;
             text-decoration: none;
+            line-height: 1.2;
             transition: all .15s;
         }
 
@@ -192,7 +194,6 @@
             font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 10px;
         }
 
         .login-card-body {
@@ -261,21 +262,6 @@
             font-size: .88rem;
             margin-bottom: 20px;
             display: none;
-        }
-
-        .back-link {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
-            font-size: .88rem;
-            color: var(--muted);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .back-link:hover {
-            color: var(--red);
-            text-decoration: underline;
         }
 
         /* ── FOOTER ── */
@@ -357,7 +343,6 @@
     <div class="page-wrap">
         <div class="login-card">
             <div class="login-card-header">
-                <span>🔐</span>
                 <span>Xác thực Quản trị viên</span>
             </div>
             <div class="login-card-body">
@@ -370,8 +355,7 @@
                     <label class="form-label" for="password">Mật khẩu</label>
                     <input type="password" id="password" class="form-control" placeholder="Nhập mật khẩu..." autocomplete="current-password" onkeydown="if(event.key==='Enter') doLogin()">
                 </div>
-                <button class="btn-submit" id="btnLogin" onclick="doLogin()">🔐 Đăng nhập hệ thống</button>
-                <a href="<%= ctx %>/phan-anh" class="back-link">← Quay lại trang phản ánh</a>
+                <button class="btn-submit" id="btnLogin" onclick="doLogin()">Đăng nhập</button>
             </div>
         </div>
     </div>
@@ -405,7 +389,7 @@
                 return;
             }
             btn.disabled = true;
-            btn.textContent = '⏳ Đang xác thực...';
+            btn.textContent = 'Đang xác thực...';
             err.style.display = 'none';
             var params = new URLSearchParams();
             params.append('username', username);
@@ -428,7 +412,7 @@
             })
             .finally(function () {
                 btn.disabled = false;
-                btn.textContent = '🔐 Đăng nhập hệ thống';
+                btn.textContent = 'Đăng nhập';
             });
         };
         function showError(msg) {
