@@ -112,10 +112,22 @@ public class FeedbackDAO extends DBContext {
             
             int affectedRows = st.executeUpdate();
             if (affectedRows > 0) {
-                ResultSet rs = st.getGeneratedKeys();
-                if (rs.next()) {
-                    return rs.getInt(1);
+                try {
+                    ResultSet rs = st.getGeneratedKeys();
+                    if (rs != null && rs.next()) {
+                        return rs.getInt(1);
+                    }
+                } catch (Exception ex) {
+                    System.out.println("Lỗi getGeneratedKeys: " + ex.getMessage());
                 }
+                try {
+                    Statement stMax = connection.createStatement();
+                    ResultSet rsMax = stMax.executeQuery("SELECT MAX(id) FROM feedback");
+                    if (rsMax.next()) {
+                        return rsMax.getInt(1);
+                    }
+                } catch(Exception ex2) {}
+                return 1;
             }
         } catch (Exception e) {
             System.out.println("Lỗi addFeedback: " + e.getMessage());
