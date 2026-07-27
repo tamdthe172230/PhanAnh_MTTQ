@@ -1,0 +1,13 @@
+# Thư mục biên dịch tạm thời của NetBeans / IDE
+build/
+dist/
+nbproject/private/
+.bin/
+
+# Thư mục dữ liệu tải lên tạm thời
+web/uploads/*
+!web/uploads/.gitkeep
+
+# Tệp hệ thống OS
+.DS_Store
+Thumbs.db
