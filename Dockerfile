@@ -4,6 +4,9 @@ FROM tomcat:10.1-jdk17-temurin
 # Xóa ứng dụng mặc định của Tomcat
 RUN rm -rf /usr/local/tomcat/webapps/*
 
+# Tắt cổng shutdown 8005 của Tomcat để tránh cảnh báo log
+RUN sed -i 's/port="8005" shutdown="SHUTDOWN"/port="-1" shutdown="SHUTDOWN"/' /usr/local/tomcat/conf/server.xml
+
 # Copy thư mục giao diện web (JSP, CSS, JS, WEB-INF)
 COPY web /usr/local/tomcat/webapps/ROOT
 
