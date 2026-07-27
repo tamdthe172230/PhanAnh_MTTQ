@@ -330,9 +330,6 @@
                     <li><a href="<%= ctx %>/phan-anh#tracuu">Tra cứu</a></li>
                     <li><a href="#" class="active">Quản lý</a></li>
                 </ul>
-                <div class="navbar-right">
-                    <a href="<%= ctx %>/phan-anh-login" class="btn-login">Đăng nhập</a>
-                </div>
             </div>
         </nav>
     </header>
