@@ -9,9 +9,12 @@ public class DBContext {
 
     public DBContext() {
         try {
-            String url = "jdbc:sqlserver://localhost:1433;databaseName=UBND_MatTranLienHoa;encrypt=false";
-            String username = "sa";
-            String password = "123";
+            String dbHost   = System.getenv("DB_HOST") != null ? System.getenv("DB_HOST") : "localhost:1433";
+            String dbName   = System.getenv("DB_NAME") != null ? System.getenv("DB_NAME") : "UBND_MatTranLienHoa";
+            String username = System.getenv("DB_USER") != null ? System.getenv("DB_USER") : "sa";
+            String password = System.getenv("DB_PASS") != null ? System.getenv("DB_PASS") : "123";
+
+            String url = "jdbc:sqlserver://" + dbHost + ";databaseName=" + dbName + ";encrypt=false;trustServerCertificate=true;";
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             connection = DriverManager.getConnection(url, username, password);
         } catch (ClassNotFoundException | SQLException ex) {
