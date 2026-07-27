@@ -1437,6 +1437,42 @@
 
                         var allFeedbacks = [];   // dữ liệu gốc từ API
                         var filteredList = [];   // sau khi lọc tìm kiếm
+                        
+                        function processFeedbackData(rawList) {
+                            if (!rawList) return [];
+                            return rawList.map(function (fb) {
+                                var displayType = fb.type || 'Phản ánh, kiến nghị';
+                                var displayContent = fb.content || '';
+                                if (displayContent && displayContent.indexOf('[Lĩnh vực: ') === 0) {
+                                    var endIdx = displayContent.indexOf('] ');
+                                    if (endIdx !== -1) {
+                                        displayType = displayContent.substring(11, endIdx);
+                                        displayContent = displayContent.substring(endIdx + 2);
+                                    } else {
+                                        var endIdx2 = displayContent.indexOf(']');
+                                        if (endIdx2 !== -1) {
+                                            displayType = displayContent.substring(11, endIdx2);
+                                            displayContent = displayContent.substring(endIdx2 + 1).trim();
+                                        }
+                                    }
+                                }
+                                return {
+                                    id: fb.id,
+                                    voterName: fb.voterName,
+                                    phone: fb.phone,
+                                    date: fb.date,
+                                    thon: fb.thon,
+                                    type: displayType,
+                                    content: displayContent,
+                                    originalContent: fb.content,
+                                    status: fb.status,
+                                    statusLabel: fb.statusLabel,
+                                    reply: fb.reply,
+                                    attachedFile: fb.attachedFile
+                                };
+                            });
+                        }
+
                         var PAGE_SIZE = 12;
                         var currentPage = 1;
 
@@ -1776,7 +1812,7 @@
                             fetch(BASE + '/api/feedback')
                                 .then(function (r) { return r.json(); })
                                 .then(function (data) {
-                                    allFeedbacks = data.sort(function (a, b) { return b.id - a.id; });
+                                    allFeedbacks = processFeedbackData(data).sort(function (a, b) { return b.id - a.id; });
                                     adminData = allFeedbacks.slice();
                                     adminFiltered = adminData.slice();
                                     adminCurrentPage = 1;
