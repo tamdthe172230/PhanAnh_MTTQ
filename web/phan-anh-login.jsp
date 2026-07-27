@@ -149,7 +149,6 @@
         }
 
         .btn-login {
-            display: inline-block;
             padding: 8px 20px;
             border: 1.5px solid rgba(255, 255, 255, .8);
             color: #fff;
@@ -158,7 +157,6 @@
             font-size: .9rem;
             font-weight: 700;
             text-decoration: none;
-            line-height: 1.2;
             transition: all .15s;
         }
 
