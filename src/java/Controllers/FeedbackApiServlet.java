@@ -109,10 +109,7 @@ public class FeedbackApiServlet extends HttpServlet {
             FeedbackDAO feedbackDao = new FeedbackDAO();
             
             if (typeOther != null && !typeOther.trim().isEmpty()) {
-                int newTypeId = feedbackDao.getOrCreateFeedbackType(typeOther.trim());
-                if (newTypeId > 0) {
-                    typeId = newTypeId;
-                }
+                content = "[Lĩnh vực: " + typeOther.trim() + "] " + content;
             }
             
             // Xử lý tệp đính kèm
