@@ -95,10 +95,26 @@ public class FeedbackDAO extends DBContext {
         int validStreetId = getValidStreetId(streetId);
         int validTypeId = getValidTypeId(typeId);
 
-        String sql = "INSERT INTO feedback (voter_name, phone, feedback_date, street_id, type_id, status, status_label, content, reply, attached_file) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try {
-            PreparedStatement st = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            boolean isPostgres = false;
+            try {
+                if (connection.getMetaData() != null && connection.getMetaData().getDatabaseProductName() != null) {
+                    isPostgres = connection.getMetaData().getDatabaseProductName().toLowerCase().contains("postgresql");
+                }
+            } catch(Exception ex) {}
+
+            String sql;
+            PreparedStatement st;
+            if (isPostgres) {
+                sql = "INSERT INTO feedback (voter_name, phone, feedback_date, street_id, type_id, status, status_label, content, reply, attached_file, is_deleted) " +
+                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0) RETURNING id";
+                st = connection.prepareStatement(sql);
+            } else {
+                sql = "INSERT INTO feedback (voter_name, phone, feedback_date, street_id, type_id, status, status_label, content, reply, attached_file, is_deleted) " +
+                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)";
+                st = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            }
+
             st.setString(1, fb.getVoterName());
             st.setString(2, fb.getPhone());
             st.setString(3, fb.getDate());
@@ -109,25 +125,30 @@ public class FeedbackDAO extends DBContext {
             st.setString(8, fb.getContent());
             st.setString(9, fb.getReply() != null ? fb.getReply() : "");
             st.setString(10, fb.getAttachedFile() != null ? fb.getAttachedFile() : "");
-            
-            int affectedRows = st.executeUpdate();
-            if (affectedRows > 0) {
-                try {
-                    ResultSet rs = st.getGeneratedKeys();
-                    if (rs != null && rs.next()) {
-                        return rs.getInt(1);
-                    }
-                } catch (Exception ex) {
-                    System.out.println("Lỗi getGeneratedKeys: " + ex.getMessage());
+
+            if (isPostgres) {
+                ResultSet rs = st.executeQuery();
+                if (rs.next()) {
+                    return rs.getInt(1);
                 }
-                try {
-                    Statement stMax = connection.createStatement();
-                    ResultSet rsMax = stMax.executeQuery("SELECT MAX(id) FROM feedback");
-                    if (rsMax.next()) {
-                        return rsMax.getInt(1);
-                    }
-                } catch(Exception ex2) {}
-                return 1;
+            } else {
+                int affectedRows = st.executeUpdate();
+                if (affectedRows > 0) {
+                    try {
+                        ResultSet rs = st.getGeneratedKeys();
+                        if (rs != null && rs.next()) {
+                            return rs.getInt(1);
+                        }
+                    } catch (Exception ex) {}
+                    try {
+                        Statement stMax = connection.createStatement();
+                        ResultSet rsMax = stMax.executeQuery("SELECT MAX(id) FROM feedback");
+                        if (rsMax.next()) {
+                            return rsMax.getInt(1);
+                        }
+                    } catch(Exception ex2) {}
+                    return 1;
+                }
             }
         } catch (Exception e) {
             System.out.println("Lỗi addFeedback: " + e.getMessage());
