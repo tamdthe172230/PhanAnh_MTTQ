@@ -20,6 +20,8 @@ public class DBContext {
                 url = dbUrl;
                 if (url.startsWith("postgres://")) {
                     url = url.replace("postgres://", "jdbc:postgresql://");
+                } else if (url.startsWith("postgresql://")) {
+                    url = url.replace("postgresql://", "jdbc:postgresql://");
                 }
             } else if (dbHost != null && !dbHost.trim().isEmpty()) {
                 url = "jdbc:sqlserver://" + dbHost + ";databaseName=" + dbName + ";encrypt=false;trustServerCertificate=true;";
