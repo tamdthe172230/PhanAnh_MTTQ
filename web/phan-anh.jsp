@@ -1435,7 +1435,7 @@
                             <div>ĐT: 0328859888</div>
                         </div>
                     </div>
-                    <div class="footer-copy">Bản quyền thuộc về Ủy ban MTTQ Việt Nam Phường Liên Hòa © 2025</div>
+                    <div class="footer-copy">Bản quyền thuộc về Ủy ban MTTQ Việt Nam Phường Liên Hòa © 2026</div>
                 </footer>
 
                 <script>
