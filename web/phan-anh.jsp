@@ -1432,7 +1432,7 @@
                         </div>
                         <div class="footer-right">
                             <div>Hỗ trợ kỹ thuật: CNTT Phường Liên Hòa</div>
-                            <div>ĐT: 0862.981.862</div>
+                            <div>ĐT: 0328859888</div>
                         </div>
                     </div>
                     <div class="footer-copy">Bản quyền thuộc về Ủy ban MTTQ Việt Nam Phường Liên Hòa © 2025</div>
